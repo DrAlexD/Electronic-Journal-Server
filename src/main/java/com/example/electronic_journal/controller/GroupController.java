@@ -34,6 +34,7 @@ public class GroupController {
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/groups/{id}")
     public ResponseEntity<Group> getGroupById(@PathVariable("id") long id) {
         Group group = groupRepository.findById(id).orElseThrow(() ->
@@ -42,29 +43,30 @@ public class GroupController {
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/groups")
-    public ResponseEntity<Group> createGroup(@RequestBody Group group) {
-        Group _group = groupRepository
-                .save(new Group(group.getTitle()));
-        return new ResponseEntity<>(_group, HttpStatus.CREATED);
+    public ResponseEntity<HttpStatus> createGroup(@RequestBody Group group) {
+        groupRepository.save(new Group(group.getTitle()));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/groups/{id}")
-    public ResponseEntity<Group> updateGroup(@PathVariable("id") long id, @RequestBody Group group) {
+    public ResponseEntity<HttpStatus> updateGroup(@PathVariable("id") long id, @RequestBody Group group) {
         Group _group = groupRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found Group with id = " + id));
 
         _group.setTitle(group.getTitle());
+        groupRepository.save(_group);
 
-        return new ResponseEntity<>(groupRepository.save(_group), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/groups/{id}")
     public ResponseEntity<HttpStatus> deleteGroup(@PathVariable("id") long id) {
         groupRepository.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }

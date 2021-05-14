@@ -1,7 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -13,17 +12,15 @@ public class StudentPerformanceInSubject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "subject_info_id", nullable = false)
     private SubjectInfo subjectInfo;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "studentPerformanceInSubject", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<StudentPerformanceInModule> studentPerformanceInModules;
 
@@ -91,11 +88,11 @@ public class StudentPerformanceInSubject {
         this.bonusPoints = bonusPoints;
     }
 
-    public Boolean getHaveCreditOrAdmission() {
+    public Boolean getIsHaveCreditOrAdmission() {
         return isHaveCreditOrAdmission;
     }
 
-    public void setHaveCreditOrAdmission(Boolean haveCreditOrAdmission) {
+    public void setIsHaveCreditOrAdmission(Boolean haveCreditOrAdmission) {
         isHaveCreditOrAdmission = haveCreditOrAdmission;
     }
 

@@ -1,7 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -13,20 +12,19 @@ public class Module {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "subject_info_id", nullable = false)
     private SubjectInfo subjectInfo;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Lesson> lessons;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Event> events;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<StudentPerformanceInModule> studentsPerformancesInModule;
 

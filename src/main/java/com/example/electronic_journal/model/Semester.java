@@ -1,6 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class Semester {
     @Column(nullable = false)
     private Boolean isFirstHalf;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "semester", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SubjectInfo> subjectInfos;
 
@@ -45,11 +45,11 @@ public class Semester {
         this.year = year;
     }
 
-    public Boolean getFirstHalf() {
+    public Boolean getIsFirstHalf() {
         return isFirstHalf;
     }
 
-    public void setFirstHalf(Boolean firstHalf) {
+    public void setIsFirstHalf(Boolean firstHalf) {
         isFirstHalf = firstHalf;
     }
 

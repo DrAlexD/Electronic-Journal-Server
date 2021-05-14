@@ -1,7 +1,5 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -12,12 +10,10 @@ public class StudentEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "student_performance_in_module_id", nullable = false)
     private StudentPerformanceInModule studentPerformanceInModule;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
@@ -56,6 +52,7 @@ public class StudentEvent {
         this.earnedPoints = earnedPoints;
         this.bonusPoints = bonusPoints;
         this.isHaveCredit = isHaveCredit;
+        /*this.isHaveCredit = earnedPoints + bonusPoints > event.getMinPoints();*/
     }
 
     public Long getId() {
@@ -90,11 +87,11 @@ public class StudentEvent {
         this.attemptNumber = attemptNumber;
     }
 
-    public Boolean getAttended() {
+    public Boolean getIsAttended() {
         return isAttended;
     }
 
-    public void setAttended(Boolean attended) {
+    public void setIsAttended(Boolean attended) {
         isAttended = attended;
     }
 
@@ -130,11 +127,11 @@ public class StudentEvent {
         this.bonusPoints = bonusPoints;
     }
 
-    public Boolean getHaveCredit() {
+    public Boolean getIsHaveCredit() {
         return isHaveCredit;
     }
 
-    public void setHaveCredit(Boolean haveCredit) {
+    public void setIsHaveCredit(Boolean haveCredit) {
         isHaveCredit = haveCredit;
     }
 

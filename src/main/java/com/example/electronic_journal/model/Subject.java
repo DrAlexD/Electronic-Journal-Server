@@ -1,6 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,7 +14,7 @@ public class Subject {
     @Column(nullable = false)
     private String title;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SubjectInfo> subjectInfos;
 

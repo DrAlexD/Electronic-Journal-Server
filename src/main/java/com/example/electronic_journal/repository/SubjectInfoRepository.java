@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SubjectInfoRepository extends JpaRepository<SubjectInfo, Long> {
@@ -16,4 +17,7 @@ public interface SubjectInfoRepository extends JpaRepository<SubjectInfo, Long> 
     @Query("select s from SubjectInfo s where s.lecturerId= ?1 and s.semester.id = ?2 and s.subject.id = ?3  or " +
             "s.seminarian.id= ?1 and s.semester.id = ?2 and s.subject.id = ?3")
     List<SubjectInfo> findByProfessorIdAndSemesterIdAndSubjectId(Long professorId, Long semesterId, Long subjectId);
+
+    @Query("select s from SubjectInfo s where s.group.id= ?1 and s.semester.id = ?2 and s.subject.id = ?3 ")
+    Optional<SubjectInfo> findByGroupIdAndSemesterIdAndSubjectId(Long groupId, Long semesterId, Long subjectId);
 }

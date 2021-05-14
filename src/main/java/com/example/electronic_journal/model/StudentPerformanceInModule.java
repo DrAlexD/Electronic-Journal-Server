@@ -1,7 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -13,21 +12,19 @@ public class StudentPerformanceInModule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "module_id", nullable = false)
     private Module module;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "student_performance_in_subject_id", nullable = false)
     private StudentPerformanceInSubject studentPerformanceInSubject;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "studentPerformanceInModule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<StudentLesson> studentLessons;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "studentPerformanceInModule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<StudentEvent> studentEvents;
 
@@ -97,11 +94,11 @@ public class StudentPerformanceInModule {
         this.earnedPoints = earnedPoints;
     }
 
-    public Boolean getHaveCredit() {
+    public Boolean getIsHaveCredit() {
         return isHaveCredit;
     }
 
-    public void setHaveCredit(Boolean haveCredit) {
+    public void setIsHaveCredit(Boolean haveCredit) {
         isHaveCredit = haveCredit;
     }
 

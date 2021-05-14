@@ -34,6 +34,7 @@ public class SemesterController {
         return new ResponseEntity<>(semesters, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/semesters/{id}")
     public ResponseEntity<Semester> getSemesterById(@PathVariable("id") long id) {
         Semester semester = semesterRepository.findById(id).orElseThrow(() ->
@@ -42,24 +43,27 @@ public class SemesterController {
         return new ResponseEntity<>(semester, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/semesters")
-    public ResponseEntity<Semester> createSemester(@RequestBody Semester semester) {
-        Semester _semester = semesterRepository
-                .save(new Semester(semester.getYear(), semester.getFirstHalf()));
-        return new ResponseEntity<>(_semester, HttpStatus.CREATED);
+    public ResponseEntity<HttpStatus> createSemester(@RequestBody Semester semester) {
+        semesterRepository.save(new Semester(semester.getYear(), semester.getIsFirstHalf()));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/semesters/{id}")
-    public ResponseEntity<Semester> updateSemester(@PathVariable("id") long id, @RequestBody Semester semester) {
+    public ResponseEntity<HttpStatus> updateSemester(@PathVariable("id") long id, @RequestBody Semester semester) {
         Semester _semester = semesterRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found Semester with id = " + id));
 
         _semester.setYear(semester.getYear());
-        _semester.setFirstHalf(semester.getFirstHalf());
+        _semester.setIsFirstHalf(semester.getIsFirstHalf());
+        semesterRepository.save(_semester);
 
-        return new ResponseEntity<>(semesterRepository.save(_semester), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/semesters/{id}")
     public ResponseEntity<HttpStatus> deleteSemester(@PathVariable("id") long id) {
         semesterRepository.deleteById(id);

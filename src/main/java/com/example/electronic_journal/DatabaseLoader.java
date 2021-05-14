@@ -1,10 +1,15 @@
 package com.example.electronic_journal;
 
+/*import com.example.electronic_journal.model.*;*/
+
 import com.example.electronic_journal.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+/*import java.util.Calendar;
+import java.util.Date;*/
 
 
 @Component
@@ -51,7 +56,8 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        /*Professor professor1 = new Professor("Игорь", "Вишняков", "qwerty", encoder.encode("123456"));
+        /*
+        Professor professor1 = new Professor("Игорь", "Вишняков", "qwerty", encoder.encode("123456"));
         professor1.setRole(ERole.ROLE_ADMIN);
         Professor professor2 = new Professor("Сергей", "Скоробогатов", "СергейСкоробогатов", encoder.encode("1234567"));
         Professor professor3 = new Professor("Анна", "Домрачева", "АннаДомрачева", encoder.encode("1234568"));
@@ -109,11 +115,11 @@ public class DatabaseLoader implements CommandLineRunner {
         studentRepository.save(student32);
         studentRepository.save(student33);
 
-        SubjectInfo subjectInfo1 = new SubjectInfo(group3, subject1, professor2.getId(), professor1, semester1,
+        SubjectInfo subjectInfo1 = new SubjectInfo(group3, subject1, professor2.getId(), professor1, semester3,
                 true, false);
-        SubjectInfo subjectInfo2 = new SubjectInfo(group1, subject2, professor1.getId(), professor1, semester1,
+        SubjectInfo subjectInfo2 = new SubjectInfo(group1, subject2, professor1.getId(), professor1, semester3,
                 false, false);
-        SubjectInfo subjectInfo3 = new SubjectInfo(group2, subject3, professor2.getId(), professor3, semester1,
+        SubjectInfo subjectInfo3 = new SubjectInfo(group2, subject3, professor2.getId(), professor3, semester3,
                 false, true);
 
         subjectInfoRepository.save(subjectInfo1);
@@ -267,6 +273,7 @@ public class DatabaseLoader implements CommandLineRunner {
         studentEventRepository.save(studentEvent3);
         studentEventRepository.save(studentEvent4);
         studentEventRepository.save(studentEvent5);
-        studentEventRepository.save(studentEvent6);*/
+        studentEventRepository.save(studentEvent6);
+        */
     }
 }

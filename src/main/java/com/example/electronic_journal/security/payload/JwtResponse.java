@@ -1,54 +1,25 @@
 package com.example.electronic_journal.security.payload;
 
-import java.util.List;
-
 public class JwtResponse {
-    private String token;
-    private String type = "Bearer";
-    private Long id;
-    private String username;
-    private List<String> roles;
+    private final String token;
+    private final Long id;
+    private final Boolean isProfessor;
 
-    public JwtResponse(String accessToken, Long id, String username, List<String> roles) {
-        this.token = accessToken;
+    public JwtResponse(String token, Long id, Boolean isProfessor) {
+        this.token = token;
         this.id = id;
-        this.username = username;
-        this.roles = roles;
+        this.isProfessor = isProfessor;
     }
 
-    public String getAccessToken() {
+    public String getToken() {
         return token;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.token = accessToken;
-    }
-
-    public String getTokenType() {
-        return type;
-    }
-
-    public void setTokenType(String tokenType) {
-        this.type = tokenType;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public List<String> getRoles() {
-        return roles;
+    public Boolean getIsProfessor() {
+        return isProfessor;
     }
 }

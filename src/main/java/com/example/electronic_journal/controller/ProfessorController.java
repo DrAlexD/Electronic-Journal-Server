@@ -27,7 +27,7 @@ public class ProfessorController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/professors")
-    public ResponseEntity<List<Professor>> getAllProfessors() {
+    public ResponseEntity<List<Professor>> getProfessors() {
         List<Professor> professors = new ArrayList<>(professorRepository.findAll(Sort.by(Sort.Direction.ASC, "id")));
 
         if (professors.isEmpty()) {
@@ -37,6 +37,7 @@ public class ProfessorController {
         return new ResponseEntity<>(professors, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/professors/{id}")
     public ResponseEntity<Professor> getProfessorById(@PathVariable("id") long id) {
         Professor professor = professorRepository.findById(id).orElseThrow(() ->
@@ -45,6 +46,7 @@ public class ProfessorController {
         return new ResponseEntity<>(professor, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/professors")
     public ResponseEntity<HttpStatus> createProfessor(@RequestBody Professor professor) {
         if (professorRepository.existsByUsername(professor.getUsername())) {
@@ -57,28 +59,30 @@ public class ProfessorController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/professors/{id}")
-    public ResponseEntity<Professor> updateProfessor(@PathVariable("id") long id, @RequestBody Professor professor) {
+    public ResponseEntity<HttpStatus> updateProfessor(@PathVariable("id") long id, @RequestBody Professor professor) {
         Professor _professor = professorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found Professor with id = " + id));
 
+        if (!_professor.getUsername().equals(professor.getUsername()) && professorRepository.existsByUsername(professor.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        } else {
+            _professor.setUsername(professor.getUsername());
+        }
         _professor.setFirstName(professor.getFirstName());
         _professor.setSecondName(professor.getSecondName());
+        _professor.setPassword(professor.getPassword());
+        professorRepository.save(_professor);
 
-        return new ResponseEntity<>(professorRepository.save(_professor), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/professors/{id}")
     public ResponseEntity<HttpStatus> deleteProfessor(@PathVariable("id") long id) {
         professorRepository.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    /*@DeleteMapping("/professors")
-    public ResponseEntity<HttpStatus> deleteAllProfessors() {
-        professorRepository.deleteAll();
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }*/
 }

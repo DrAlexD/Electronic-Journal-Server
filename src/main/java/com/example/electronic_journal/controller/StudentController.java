@@ -18,7 +18,6 @@ import java.util.List;
 public class StudentController {
 
     private final StudentRepository studentRepository;
-
     private final PasswordEncoder encoder;
 
     public StudentController(StudentRepository studentRepository, PasswordEncoder encoder) {
@@ -44,6 +43,7 @@ public class StudentController {
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/students/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable("id") long id) {
         Student student = studentRepository.findById(id).orElseThrow(() ->
@@ -52,6 +52,7 @@ public class StudentController {
         return new ResponseEntity<>(student, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/students")
     public ResponseEntity<HttpStatus> createStudent(@RequestBody Student student) {
         if (studentRepository.existsByUsername(student.getUsername())) {
@@ -64,23 +65,31 @@ public class StudentController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/students/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable("id") long id, @RequestBody Student student) {
+    public ResponseEntity<HttpStatus> updateStudent(@PathVariable("id") long id, @RequestBody Student student) {
         Student _student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found Student with id = " + id));
 
+        if (!_student.getUsername().equals(student.getUsername()) && studentRepository.existsByUsername(student.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        } else {
+            _student.setUsername(student.getUsername());
+        }
         _student.setFirstName(student.getFirstName());
         _student.setSecondName(student.getSecondName());
+        _student.setPassword(student.getPassword());
         _student.setGroup(student.getGroup());
+        studentRepository.save(_student);
 
-        return new ResponseEntity<>(studentRepository.save(_student), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/students/{id}")
     public ResponseEntity<HttpStatus> deleteStudent(@PathVariable("id") long id) {
         studentRepository.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

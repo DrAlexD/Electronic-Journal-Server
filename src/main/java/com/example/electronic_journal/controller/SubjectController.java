@@ -34,6 +34,7 @@ public class SubjectController {
         return new ResponseEntity<>(subjects, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/subjects/{id}")
     public ResponseEntity<Subject> getSubjectById(@PathVariable("id") long id) {
         Subject subject = subjectRepository.findById(id).orElseThrow(() ->
@@ -42,23 +43,26 @@ public class SubjectController {
         return new ResponseEntity<>(subject, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/subjects")
-    public ResponseEntity<Subject> createSubject(@RequestBody Subject subject) {
-        Subject _subject = subjectRepository
-                .save(new Subject(subject.getTitle()));
-        return new ResponseEntity<>(_subject, HttpStatus.CREATED);
+    public ResponseEntity<HttpStatus> createSubject(@RequestBody Subject subject) {
+        subjectRepository.save(new Subject(subject.getTitle()));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/subjects/{id}")
-    public ResponseEntity<Subject> updateSubject(@PathVariable("id") long id, @RequestBody Subject subject) {
+    public ResponseEntity<HttpStatus> updateSubject(@PathVariable("id") long id, @RequestBody Subject subject) {
         Subject _subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found Subject with id = " + id));
 
         _subject.setTitle(subject.getTitle());
+        subjectRepository.save(_subject);
 
-        return new ResponseEntity<>(subjectRepository.save(_subject), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/subjects/{id}")
     public ResponseEntity<HttpStatus> deleteSubject(@PathVariable("id") long id) {
         subjectRepository.deleteById(id);

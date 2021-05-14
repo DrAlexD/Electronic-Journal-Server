@@ -1,6 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,11 +15,11 @@ public class Group {
     @Column(nullable = false)
     private String title;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Student> students;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SubjectInfo> subjectInfos;
 

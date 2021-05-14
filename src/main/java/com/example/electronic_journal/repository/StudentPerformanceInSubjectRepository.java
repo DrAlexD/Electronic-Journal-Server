@@ -10,5 +10,8 @@ import java.util.List;
 @Repository
 public interface StudentPerformanceInSubjectRepository extends JpaRepository<StudentPerformanceInSubject, Long> {
     @Query("select s from StudentPerformanceInSubject s where s.student.id= ?1 and s.subjectInfo.semester.id = ?2")
-    List<StudentPerformanceInSubject> findByProfessorIdAndSemesterId(Long studentId, Long semesterId);
+    List<StudentPerformanceInSubject> findByStudentIdAndSemesterId(Long studentId, Long semesterId);
+
+    @Query("select s from StudentPerformanceInSubject s where s.subjectInfo.id = ?1")
+    List<StudentPerformanceInSubject> findBySubjectInfoId(Long subjectInfoId);
 }

@@ -1,7 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -13,35 +12,30 @@ public class SubjectInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seminarian_id", nullable = false)
+    @JoinColumn(name = "seminarian_id")
     private Professor seminarian;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "semester_id", nullable = false)
     private Semester semester;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "subjectInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Module> modules;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "subjectInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<StudentPerformanceInSubject> studentsPerformancesInSubject;
 
-    @Column(nullable = false)
     private Long lecturerId;
     @Column(nullable = false)
     private Boolean isExam;
@@ -125,19 +119,19 @@ public class SubjectInfo {
         this.lecturerId = lecturerId;
     }
 
-    public Boolean getExam() {
+    public Boolean getIsExam() {
         return isExam;
     }
 
-    public void setExam(Boolean exam) {
+    public void setIsExam(Boolean exam) {
         isExam = exam;
     }
 
-    public Boolean getDifferentiatedCredit() {
+    public Boolean getIsDifferentiatedCredit() {
         return isDifferentiatedCredit;
     }
 
-    public void setDifferentiatedCredit(Boolean differentiatedCredit) {
+    public void setIsDifferentiatedCredit(Boolean differentiatedCredit) {
         isDifferentiatedCredit = differentiatedCredit;
     }
 

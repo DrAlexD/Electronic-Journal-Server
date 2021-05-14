@@ -1,6 +1,6 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -25,7 +25,7 @@ public class Professor {
     @Enumerated(EnumType.STRING)
     private ERole role;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "seminarian", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SubjectInfo> subjectInfos;
 

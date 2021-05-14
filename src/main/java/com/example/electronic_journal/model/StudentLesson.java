@@ -1,7 +1,5 @@
 package com.example.electronic_journal.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -11,12 +9,10 @@ public class StudentLesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "student_performance_in_module_id", nullable = false)
     private StudentPerformanceInModule studentPerformanceInModule;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
@@ -65,11 +61,11 @@ public class StudentLesson {
         this.lesson = lesson;
     }
 
-    public Boolean getAttended() {
+    public Boolean getIsAttended() {
         return isAttended;
     }
 
-    public void setAttended(Boolean attended) {
+    public void setIsAttended(Boolean attended) {
         isAttended = attended;
     }
 
