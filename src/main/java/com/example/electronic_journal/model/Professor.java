@@ -26,7 +26,7 @@ public class Professor {
     private ERole role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "seminarian", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "seminarian", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<SubjectInfo> subjectInfos;
 
     public Professor() {

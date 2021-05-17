@@ -2,8 +2,6 @@ package com.example.electronic_journal.controller;
 
 import com.example.electronic_journal.exception.ResourceNotFoundException;
 import com.example.electronic_journal.model.StudentPerformanceInSubject;
-import com.example.electronic_journal.model.Subject;
-import com.example.electronic_journal.model.SubjectInfo;
 import com.example.electronic_journal.repository.StudentPerformanceInSubjectRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -26,20 +23,15 @@ public class StudentPerformanceInSubjectController {
 
     @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/available-student-subjects")
-    public ResponseEntity<List<Subject>> getAvailableStudentSubjects(@RequestParam Long studentId, @RequestParam Long semesterId) {
+    public ResponseEntity<List<StudentPerformanceInSubject>> getAvailableStudentSubjects(@RequestParam Long studentId, @RequestParam Long semesterId) {
         List<StudentPerformanceInSubject> studentPerformance = new ArrayList<>(studentPerformanceInSubjectRepository
                 .findByStudentIdAndSemesterId(studentId, semesterId));
 
-        List<Subject> subjects = studentPerformance.stream()
-                .map(StudentPerformanceInSubject::getSubjectInfo)
-                .map(SubjectInfo::getSubject).distinct()
-                .collect(Collectors.toList());
-
-        if (subjects.isEmpty()) {
+        if (studentPerformance.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(subjects, HttpStatus.OK);
+        return new ResponseEntity<>(studentPerformance, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")

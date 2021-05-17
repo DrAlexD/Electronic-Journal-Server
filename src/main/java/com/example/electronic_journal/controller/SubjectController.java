@@ -46,6 +46,10 @@ public class SubjectController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/subjects")
     public ResponseEntity<HttpStatus> createSubject(@RequestBody Subject subject) {
+        if (subjectRepository.existsByTitle(subject.getTitle())) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
         subjectRepository.save(new Subject(subject.getTitle()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

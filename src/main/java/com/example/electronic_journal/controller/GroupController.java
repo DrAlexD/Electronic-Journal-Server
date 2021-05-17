@@ -46,6 +46,10 @@ public class GroupController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/groups")
     public ResponseEntity<HttpStatus> createGroup(@RequestBody Group group) {
+        if (groupRepository.existsByTitle(group.getTitle())) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
         groupRepository.save(new Group(group.getTitle()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

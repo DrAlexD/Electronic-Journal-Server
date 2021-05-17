@@ -17,7 +17,6 @@ public class SubjectInfoController {
 
     private final SubjectInfoRepository subjectInfoRepository;
     private final StudentRepository studentRepository;
-    private final ProfessorRepository professorRepository;
     private final ModuleRepository moduleRepository;
     private final StudentPerformanceInSubjectRepository studentPerformanceInSubjectRepository;
     private final StudentPerformanceInModuleRepository studentPerformanceInModuleRepository;
@@ -25,13 +24,12 @@ public class SubjectInfoController {
     public SubjectInfoController(SubjectInfoRepository subjectInfoRepository, ModuleRepository moduleRepository,
                                  StudentPerformanceInSubjectRepository studentPerformanceInSubjectRepository,
                                  StudentPerformanceInModuleRepository studentPerformanceInModuleRepository,
-                                 StudentRepository studentRepository, ProfessorRepository professorRepository) {
+                                 StudentRepository studentRepository) {
         this.subjectInfoRepository = subjectInfoRepository;
         this.moduleRepository = moduleRepository;
         this.studentPerformanceInSubjectRepository = studentPerformanceInSubjectRepository;
         this.studentPerformanceInModuleRepository = studentPerformanceInModuleRepository;
         this.studentRepository = studentRepository;
-        this.professorRepository = professorRepository;
     }
 
     @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
@@ -53,7 +51,7 @@ public class SubjectInfoController {
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/available-subjects")
     public ResponseEntity<List<Subject>> getAvailableSubjects(@RequestParam Long professorId, @RequestParam Long semesterId) {
         List<SubjectInfo> subjectInfos = new ArrayList<>(subjectInfoRepository
@@ -103,7 +101,7 @@ public class SubjectInfoController {
         return new ResponseEntity<>(subjectInfos, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/available-subjects-with-groups")
     public ResponseEntity<Map<String, List<SubjectInfo>>> getAvailableSubjectsWithGroups(@RequestParam Long professorId,
                                                                                          @RequestParam Long semesterId) {
@@ -206,21 +204,40 @@ public class SubjectInfoController {
 
     @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
     @DeleteMapping("/subjects-info/{id}")
-    public ResponseEntity<SubjectInfo> deleteSubjectInfo(@PathVariable("id") long id, @RequestParam Long professorId) {
+    public ResponseEntity<HttpStatus> deleteSubjectInfo(@PathVariable("id") long id, @RequestParam Long professorId) {
         SubjectInfo _subjectInfo = subjectInfoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found SubjectInfo with id = " + id));
 
-        if (_subjectInfo.getLecturerId().equals(professorId) && _subjectInfo.getSeminarian().getId().equals(professorId)) {
-            subjectInfoRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else if (_subjectInfo.getLecturerId().equals(professorId)) {
-            _subjectInfo.setLecturerId(_subjectInfo.getSeminarian().getId());
-        } else if (_subjectInfo.getSeminarian().getId().equals(professorId)) {
-            Professor professor = professorRepository.findById(_subjectInfo.getLecturerId()).orElseThrow(() ->
-                    new ResourceNotFoundException("Not found Professor with id = " + _subjectInfo.getLecturerId()));
-            _subjectInfo.setSeminarian(professor);
+        if (_subjectInfo.getLecturerId() != null) {
+            if (_subjectInfo.getSeminarian() != null) {
+                if (_subjectInfo.getLecturerId().equals(professorId) && _subjectInfo.getSeminarian().getId().equals(professorId)) {
+                    subjectInfoRepository.deleteById(id);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                } else if (_subjectInfo.getLecturerId().equals(professorId)) {
+                    _subjectInfo.setLecturerId(null);
+                    subjectInfoRepository.save(_subjectInfo);
+                } else if (_subjectInfo.getSeminarian().getId().equals(professorId)) {
+                    _subjectInfo.setSeminarian(null);
+                    subjectInfoRepository.save(_subjectInfo);
+                }
+            } else {
+                if (_subjectInfo.getLecturerId().equals(professorId)) {
+                    subjectInfoRepository.deleteById(id);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                }
+            }
+        } else {
+            if (_subjectInfo.getSeminarian() != null) {
+                if (_subjectInfo.getSeminarian().getId().equals(professorId)) {
+                    subjectInfoRepository.deleteById(id);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                }
+            } else {
+                subjectInfoRepository.deleteById(id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
         }
 
-        return new ResponseEntity<>(subjectInfoRepository.save(_subjectInfo), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

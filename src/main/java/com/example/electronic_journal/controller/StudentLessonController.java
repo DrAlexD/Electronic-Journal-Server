@@ -70,7 +70,7 @@ public class StudentLessonController {
     @PostMapping("/students-lessons")
     public ResponseEntity<HttpStatus> createStudentLesson(@RequestBody StudentLesson studentLesson) {
         studentLessonRepository.save(new StudentLesson(studentLesson.getStudentPerformanceInModule(),
-                studentLesson.getLesson(), studentLesson.getIsAttended(), studentLesson.getBonusPoints()));
+                studentLesson.getLesson(), studentLesson.getIsAttended()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

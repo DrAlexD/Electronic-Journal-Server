@@ -1,5 +1,7 @@
 package com.example.electronic_journal.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -26,6 +28,7 @@ public class StudentEvent {
     private Integer variantNumber;
 
     @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
     private Date finishDate;
     private Integer earnedPoints;
     private Integer bonusPoints;

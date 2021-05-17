@@ -46,6 +46,10 @@ public class SemesterController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/semesters")
     public ResponseEntity<HttpStatus> createSemester(@RequestBody Semester semester) {
+        if (semesterRepository.existsByYearAndIsFirstHalf(semester.getYear(), semester.getIsFirstHalf())) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
         semesterRepository.save(new Semester(semester.getYear(), semester.getIsFirstHalf()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

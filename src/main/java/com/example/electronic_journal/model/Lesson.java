@@ -1,5 +1,6 @@
 package com.example.electronic_journal.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class Lesson {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
     private Date dateAndTime;
     @Column(nullable = false)
     private Boolean isLecture;

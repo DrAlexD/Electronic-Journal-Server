@@ -20,7 +20,7 @@ public class SubjectInfo {
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "seminarian_id")
     private Professor seminarian;
 

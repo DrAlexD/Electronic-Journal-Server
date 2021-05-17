@@ -1,5 +1,6 @@
 package com.example.electronic_journal.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -27,9 +28,11 @@ public class Event {
     private Integer number;
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
     private Date startDate;
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
     private Date deadlineDate;
     @Column(nullable = false)
     private Integer minPoints;

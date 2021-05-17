@@ -70,9 +70,7 @@ public class StudentEventController {
     @PostMapping("/students-events")
     public ResponseEntity<HttpStatus> createStudentEvent(@RequestBody StudentEvent studentEvent) {
         studentEventRepository.save(new StudentEvent(studentEvent.getAttemptNumber(), studentEvent.getStudentPerformanceInModule(),
-                studentEvent.getEvent(), studentEvent.getIsAttended(), studentEvent.getVariantNumber(),
-                studentEvent.getFinishDate(), studentEvent.getEarnedPoints(), studentEvent.getBonusPoints(),
-                studentEvent.getIsHaveCredit()));
+                studentEvent.getEvent(), studentEvent.getIsAttended(), studentEvent.getVariantNumber()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
