@@ -14,4 +14,10 @@ public interface StudentEventRepository extends JpaRepository<StudentEvent, Long
 
     @Query("select s from StudentEvent s where s.studentPerformanceInModule.studentPerformanceInSubject.id = ?1")
     List<StudentEvent> findByStudentPerformanceInSubjectId(Long studentPerformanceInSubjectId);
+
+    @Query("select s from StudentEvent s where s.studentPerformanceInModule.id = ?1 and s.event.id = ?2")
+    List<StudentEvent> findByStudentPerformanceInModuleIdAndEventId(Long studentPerformanceInModuleId, Long eventId);
+
+    @Query("select s from StudentEvent s where s.event.id = ?1")
+    List<StudentEvent> findByEventId(Long eventId);
 }

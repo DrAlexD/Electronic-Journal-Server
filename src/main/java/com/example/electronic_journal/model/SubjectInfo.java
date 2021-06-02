@@ -20,9 +20,9 @@ public class SubjectInfo {
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "seminarian_id")
-    private Professor seminarian;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seminars_professor_id")
+    private Professor seminarsProfessor;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "semester_id", nullable = false)
@@ -45,10 +45,10 @@ public class SubjectInfo {
     public SubjectInfo() {
     }
 
-    public SubjectInfo(Group group, Subject subject, Long lecturerId, Professor seminarian, Semester semester, Boolean isExam, Boolean isDifferentiatedCredit) {
+    public SubjectInfo(Group group, Subject subject, Long lecturerId, Professor seminarsProfessor, Semester semester, Boolean isExam, Boolean isDifferentiatedCredit) {
         this.group = group;
         this.subject = subject;
-        this.seminarian = seminarian;
+        this.seminarsProfessor = seminarsProfessor;
         this.semester = semester;
         this.lecturerId = lecturerId;
         this.isExam = isExam;
@@ -79,12 +79,12 @@ public class SubjectInfo {
         this.subject = subject;
     }
 
-    public Professor getSeminarian() {
-        return seminarian;
+    public Professor getSeminarsProfessor() {
+        return seminarsProfessor;
     }
 
-    public void setSeminarian(Professor seminarian) {
-        this.seminarian = seminarian;
+    public void setSeminarsProfessor(Professor seminarian) {
+        this.seminarsProfessor = seminarian;
     }
 
     public Semester getSemester() {
@@ -140,12 +140,12 @@ public class SubjectInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SubjectInfo that = (SubjectInfo) o;
-        return Objects.equals(id, that.id) && Objects.equals(group, that.group) && Objects.equals(subject, that.subject) && Objects.equals(seminarian, that.seminarian) && Objects.equals(semester, that.semester) && Objects.equals(lecturerId, that.lecturerId) && Objects.equals(isExam, that.isExam) && Objects.equals(isDifferentiatedCredit, that.isDifferentiatedCredit);
+        return Objects.equals(id, that.id) && Objects.equals(group, that.group) && Objects.equals(subject, that.subject) && Objects.equals(seminarsProfessor, that.seminarsProfessor) && Objects.equals(semester, that.semester) && Objects.equals(lecturerId, that.lecturerId) && Objects.equals(isExam, that.isExam) && Objects.equals(isDifferentiatedCredit, that.isDifferentiatedCredit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, group, subject, seminarian, semester, lecturerId, isExam, isDifferentiatedCredit);
+        return Objects.hash(id, group, subject, seminarsProfessor, semester, lecturerId, isExam, isDifferentiatedCredit);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class SubjectInfo {
                 "id=" + id +
                 ", group=" + group +
                 ", subject=" + subject +
-                ", seminarian=" + seminarian +
+                ", seminarian=" + seminarsProfessor +
                 ", semester=" + semester +
                 ", lecturerId=" + lecturerId +
                 ", isExam=" + isExam +

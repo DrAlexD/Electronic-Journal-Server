@@ -23,10 +23,11 @@ public class Professor {
     private String secondName;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ERole role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "seminarian", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "seminarsProfessor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SubjectInfo> subjectInfos;
 
     public Professor() {

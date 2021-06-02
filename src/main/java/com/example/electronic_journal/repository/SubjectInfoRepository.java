@@ -11,13 +11,16 @@ import java.util.Optional;
 @Repository
 public interface SubjectInfoRepository extends JpaRepository<SubjectInfo, Long> {
     @Query("select s from SubjectInfo s where s.lecturerId= ?1 and s.semester.id = ?2 or " +
-            "s.seminarian.id= ?1 and s.semester.id = ?2")
+            "s.seminarsProfessor.id= ?1 and s.semester.id = ?2")
     List<SubjectInfo> findByProfessorIdAndSemesterId(Long professorId, Long semesterId);
 
     @Query("select s from SubjectInfo s where s.lecturerId= ?1 and s.semester.id = ?2 and s.subject.id = ?3  or " +
-            "s.seminarian.id= ?1 and s.semester.id = ?2 and s.subject.id = ?3")
+            "s.seminarsProfessor.id= ?1 and s.semester.id = ?2 and s.subject.id = ?3")
     List<SubjectInfo> findByProfessorIdAndSemesterIdAndSubjectId(Long professorId, Long semesterId, Long subjectId);
 
     @Query("select s from SubjectInfo s where s.group.id= ?1 and s.semester.id = ?2 and s.subject.id = ?3 ")
     Optional<SubjectInfo> findByGroupIdAndSemesterIdAndSubjectId(Long groupId, Long semesterId, Long subjectId);
+
+    @Query("select s from SubjectInfo s where s.group.id= ?1")
+    List<SubjectInfo> findByGroupId(Long groupId);
 }

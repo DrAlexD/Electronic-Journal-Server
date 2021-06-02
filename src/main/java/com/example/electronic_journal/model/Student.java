@@ -23,6 +23,7 @@ public class Student {
     private String secondName;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ERole role;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,8 +50,9 @@ public class StudentPerformanceInModuleController {
         List<StudentPerformanceInModule> studentsPerformances = new ArrayList<>(
                 studentPerformanceInModuleRepository.findBySubjectInfoId(subjectInfoId));
 
-        Map<String, List<StudentPerformanceInModule>> studentsPerformancesByModuleNumber = studentsPerformances.stream().
-                collect(groupingBy(e -> String.valueOf(e.getModule().getModuleNumber())));
+        Map<String, List<StudentPerformanceInModule>> studentsPerformancesByModuleNumber = studentsPerformances.stream()
+                .sorted(Comparator.comparing(s -> s.getStudentPerformanceInSubject().getStudent().getSecondName()))
+                .collect(groupingBy(e -> String.valueOf(e.getModule().getModuleNumber())));
 
         if (studentsPerformancesByModuleNumber.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

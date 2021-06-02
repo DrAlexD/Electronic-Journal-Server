@@ -3,14 +3,14 @@ package com.example.electronic_journal.controller;
 import com.example.electronic_journal.exception.ResourceNotFoundException;
 import com.example.electronic_journal.model.Group;
 import com.example.electronic_journal.repository.GroupRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -25,7 +25,8 @@ public class GroupController {
     @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/groups")
     public ResponseEntity<List<Group>> getAllGroups() {
-        List<Group> groups = new ArrayList<>(groupRepository.findAll(Sort.by(Sort.Direction.ASC, "id")));
+        List<Group> groups = groupRepository.findAll().stream()
+                .sorted(Comparator.comparing(Group::getTitle)).collect(Collectors.toList());
 
         if (groups.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

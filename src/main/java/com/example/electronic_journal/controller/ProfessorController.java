@@ -3,24 +3,27 @@ package com.example.electronic_journal.controller;
 import com.example.electronic_journal.exception.ResourceNotFoundException;
 import com.example.electronic_journal.model.Professor;
 import com.example.electronic_journal.repository.ProfessorRepository;
-import org.springframework.data.domain.Sort;
+import com.example.electronic_journal.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class ProfessorController {
 
+    private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
     private final PasswordEncoder encoder;
 
-    public ProfessorController(ProfessorRepository professorRepository, PasswordEncoder encoder) {
+    public ProfessorController(StudentRepository studentRepository, ProfessorRepository professorRepository, PasswordEncoder encoder) {
+        this.studentRepository = studentRepository;
         this.professorRepository = professorRepository;
         this.encoder = encoder;
     }
@@ -28,7 +31,8 @@ public class ProfessorController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/professors")
     public ResponseEntity<List<Professor>> getProfessors() {
-        List<Professor> professors = new ArrayList<>(professorRepository.findAll(Sort.by(Sort.Direction.ASC, "id")));
+        List<Professor> professors = professorRepository.findAll().stream()
+                .sorted(Comparator.comparing(Professor::getSecondName)).collect(Collectors.toList());
 
         if (professors.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -49,7 +53,8 @@ public class ProfessorController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/professors")
     public ResponseEntity<HttpStatus> createProfessor(@RequestBody Professor professor) {
-        if (professorRepository.existsByUsername(professor.getUsername())) {
+        if (professorRepository.existsByUsername(professor.getUsername()) ||
+                studentRepository.existsByUsername(professor.getUsername())) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -72,7 +77,7 @@ public class ProfessorController {
         }
         _professor.setFirstName(professor.getFirstName());
         _professor.setSecondName(professor.getSecondName());
-        _professor.setPassword(professor.getPassword());
+        _professor.setPassword(encoder.encode(professor.getPassword()));
         professorRepository.save(_professor);
 
         return new ResponseEntity<>(HttpStatus.OK);

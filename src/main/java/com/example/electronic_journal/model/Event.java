@@ -28,22 +28,23 @@ public class Event {
     private Integer number;
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US", timezone = "GMT+03:00")
     private Date startDate;
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US", timezone = "GMT+03:00")
     private Date deadlineDate;
     @Column(nullable = false)
     private Integer minPoints;
     @Column(nullable = false)
     private Integer maxPoints;
-
+    @Column(nullable = false)
+    private Integer numberOfVariants;
 
     public Event() {
     }
 
-    public Event(Module module, Integer type, Integer number, Date startDate, Date deadlineDate, Integer minPoints, Integer maxPoints) {
+    public Event(Module module, Integer type, Integer number, Date startDate, Date deadlineDate, Integer minPoints, Integer maxPoints, Integer numberOfVariants) {
         this.module = module;
         this.type = type;
         this.number = number;
@@ -51,6 +52,7 @@ public class Event {
         this.deadlineDate = deadlineDate;
         this.minPoints = minPoints;
         this.maxPoints = maxPoints;
+        this.numberOfVariants = numberOfVariants;
     }
 
     public Long getId() {
@@ -117,6 +119,14 @@ public class Event {
         this.maxPoints = maxPoints;
     }
 
+    public Integer getNumberOfVariants() {
+        return numberOfVariants;
+    }
+
+    public void setNumberOfVariants(Integer numberOfVariants) {
+        this.numberOfVariants = numberOfVariants;
+    }
+
     public Set<StudentEvent> getStudentsEvent() {
         return studentsEvent;
     }
@@ -130,12 +140,12 @@ public class Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Objects.equals(id, event.id) && Objects.equals(module, event.module) && Objects.equals(type, event.type) && Objects.equals(number, event.number) && Objects.equals(startDate, event.startDate) && Objects.equals(deadlineDate, event.deadlineDate) && Objects.equals(minPoints, event.minPoints) && Objects.equals(maxPoints, event.maxPoints);
+        return Objects.equals(id, event.id) && Objects.equals(module, event.module) && Objects.equals(type, event.type) && Objects.equals(number, event.number) && Objects.equals(startDate, event.startDate) && Objects.equals(deadlineDate, event.deadlineDate) && Objects.equals(minPoints, event.minPoints) && Objects.equals(maxPoints, event.maxPoints) && Objects.equals(numberOfVariants, event.numberOfVariants);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, module, type, number, startDate, deadlineDate, minPoints, maxPoints);
+        return Objects.hash(id, module, type, number, startDate, deadlineDate, minPoints, maxPoints, numberOfVariants);
     }
 
     @Override
@@ -149,6 +159,7 @@ public class Event {
                 ", deadlineDate=" + deadlineDate +
                 ", minPoints=" + minPoints +
                 ", maxPoints=" + maxPoints +
+                ", numberOfVariants=" + numberOfVariants +
                 '}';
     }
 }

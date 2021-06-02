@@ -3,14 +3,14 @@ package com.example.electronic_journal.controller;
 import com.example.electronic_journal.exception.ResourceNotFoundException;
 import com.example.electronic_journal.model.Semester;
 import com.example.electronic_journal.repository.SemesterRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -25,7 +25,8 @@ public class SemesterController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/semesters")
     public ResponseEntity<List<Semester>> getAllSemesters() {
-        List<Semester> semesters = new ArrayList<>(semesterRepository.findAll(Sort.by(Sort.Direction.ASC, "id")));
+        List<Semester> semesters = semesterRepository.findAll().stream()
+                .sorted(Comparator.comparing(Semester::getYear).thenComparing(s -> !s.getIsFirstHalf())).collect(Collectors.toList());
 
         if (semesters.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

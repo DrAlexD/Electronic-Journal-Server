@@ -3,14 +3,14 @@ package com.example.electronic_journal.controller;
 import com.example.electronic_journal.exception.ResourceNotFoundException;
 import com.example.electronic_journal.model.Subject;
 import com.example.electronic_journal.repository.SubjectRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -25,7 +25,9 @@ public class SubjectController {
     @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/subjects")
     public ResponseEntity<List<Subject>> getAllSubjects() {
-        List<Subject> subjects = new ArrayList<>(subjectRepository.findAll(Sort.by(Sort.Direction.ASC, "id")));
+        List<Subject> subjects = subjectRepository.findAll().stream()
+                .sorted(Comparator.comparing(Subject::getTitle))
+                .collect(Collectors.toList());
 
         if (subjects.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

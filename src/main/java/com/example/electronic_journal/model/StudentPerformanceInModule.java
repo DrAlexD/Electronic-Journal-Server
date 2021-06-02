@@ -29,7 +29,7 @@ public class StudentPerformanceInModule {
     private Set<StudentEvent> studentEvents;
 
     private Integer earnedPoints;
-    private Boolean isHaveCredit;
+    private Boolean isHasCredit;
 
     public StudentPerformanceInModule() {
     }
@@ -39,11 +39,11 @@ public class StudentPerformanceInModule {
         this.studentPerformanceInSubject = studentPerformanceInSubject;
     }
 
-    public StudentPerformanceInModule(Module module, StudentPerformanceInSubject studentPerformanceInSubject, Integer earnedPoints, Boolean isHaveCredit) {
+    public StudentPerformanceInModule(Module module, StudentPerformanceInSubject studentPerformanceInSubject, Integer earnedPoints, Boolean isHasCredit) {
         this.module = module;
         this.studentPerformanceInSubject = studentPerformanceInSubject;
         this.earnedPoints = earnedPoints;
-        this.isHaveCredit = isHaveCredit;
+        this.isHasCredit = isHasCredit;
     }
 
     public Long getId() {
@@ -94,12 +94,12 @@ public class StudentPerformanceInModule {
         this.earnedPoints = earnedPoints;
     }
 
-    public Boolean getIsHaveCredit() {
-        return isHaveCredit;
+    public Boolean getIsHasCredit() {
+        return isHasCredit;
     }
 
-    public void setIsHaveCredit(Boolean haveCredit) {
-        isHaveCredit = haveCredit;
+    public void setIsHasCredit(Boolean haveCredit) {
+        isHasCredit = haveCredit;
     }
 
     @Override
@@ -122,7 +122,7 @@ public class StudentPerformanceInModule {
                 ", module=" + module +
                 ", studentPerformanceInSubject=" + studentPerformanceInSubject +
                 ", earnedPoints=" + earnedPoints +
-                ", isHaveCredit=" + isHaveCredit +
+                ", isHaveCredit=" + isHasCredit +
                 '}';
     }
 }

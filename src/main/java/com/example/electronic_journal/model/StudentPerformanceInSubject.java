@@ -26,7 +26,7 @@ public class StudentPerformanceInSubject {
 
     private Integer earnedPoints;
     private Integer bonusPoints;
-    private Boolean isHaveCreditOrAdmission;
+    private Boolean isHasCreditOrAdmission;
     private Integer earnedExamPoints;
     private Integer mark;
 
@@ -38,12 +38,12 @@ public class StudentPerformanceInSubject {
         this.student = student;
     }
 
-    public StudentPerformanceInSubject(SubjectInfo subjectInfo, Student student, Integer earnedPoints, Integer bonusPoints, Boolean isHaveCreditOrAdmission, Integer earnedExamPoints, Integer mark) {
+    public StudentPerformanceInSubject(SubjectInfo subjectInfo, Student student, Integer earnedPoints, Integer bonusPoints, Boolean isHasCreditOrAdmission, Integer earnedExamPoints, Integer mark) {
         this.subjectInfo = subjectInfo;
         this.student = student;
         this.earnedPoints = earnedPoints;
         this.bonusPoints = bonusPoints;
-        this.isHaveCreditOrAdmission = isHaveCreditOrAdmission;
+        this.isHasCreditOrAdmission = isHasCreditOrAdmission;
         this.earnedExamPoints = earnedExamPoints;
         this.mark = mark;
     }
@@ -88,12 +88,12 @@ public class StudentPerformanceInSubject {
         this.bonusPoints = bonusPoints;
     }
 
-    public Boolean getIsHaveCreditOrAdmission() {
-        return isHaveCreditOrAdmission;
+    public Boolean getIsHasCreditOrAdmission() {
+        return isHasCreditOrAdmission;
     }
 
-    public void setIsHaveCreditOrAdmission(Boolean haveCreditOrAdmission) {
-        isHaveCreditOrAdmission = haveCreditOrAdmission;
+    public void setIsHasCreditOrAdmission(Boolean haveCreditOrAdmission) {
+        isHasCreditOrAdmission = haveCreditOrAdmission;
     }
 
     public Integer getEarnedExamPoints() {
@@ -141,7 +141,7 @@ public class StudentPerformanceInSubject {
                 ", student=" + student +
                 ", earnedPoints=" + earnedPoints +
                 ", bonusPoints=" + bonusPoints +
-                ", isHaveCreditOrAdmission=" + isHaveCreditOrAdmission +
+                ", isHaveCreditOrAdmission=" + isHasCreditOrAdmission +
                 ", earnedExamPoints=" + earnedExamPoints +
                 ", mark=" + mark +
                 '}';

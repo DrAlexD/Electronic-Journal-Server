@@ -33,16 +33,16 @@ public class Module {
     @Column(nullable = false)
     private Integer minPoints;
     @Column(nullable = false)
-    private Integer maxPoints;
+    private Integer maxAvailablePoints;
 
     public Module() {
     }
 
-    public Module(Integer moduleNumber, SubjectInfo subjectInfo, Integer minPoints, Integer maxPoints) {
+    public Module(Integer moduleNumber, SubjectInfo subjectInfo, Integer minPoints, Integer maxAvailablePoints) {
         this.moduleNumber = moduleNumber;
         this.subjectInfo = subjectInfo;
         this.minPoints = minPoints;
-        this.maxPoints = maxPoints;
+        this.maxAvailablePoints = maxAvailablePoints;
     }
 
     public Long getId() {
@@ -93,12 +93,12 @@ public class Module {
         this.minPoints = minPoints;
     }
 
-    public Integer getMaxPoints() {
-        return maxPoints;
+    public Integer getMaxAvailablePoints() {
+        return maxAvailablePoints;
     }
 
-    public void setMaxPoints(Integer maxPoints) {
-        this.maxPoints = maxPoints;
+    public void setMaxAvailablePoints(Integer maxAvailablePoints) {
+        this.maxAvailablePoints = maxAvailablePoints;
     }
 
     public Set<StudentPerformanceInModule> getStudentsPerformancesInModule() {
@@ -114,12 +114,12 @@ public class Module {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Module module = (Module) o;
-        return Objects.equals(id, module.id) && Objects.equals(subjectInfo, module.subjectInfo) && Objects.equals(moduleNumber, module.moduleNumber) && Objects.equals(minPoints, module.minPoints) && Objects.equals(maxPoints, module.maxPoints);
+        return Objects.equals(id, module.id) && Objects.equals(subjectInfo, module.subjectInfo) && Objects.equals(moduleNumber, module.moduleNumber) && Objects.equals(minPoints, module.minPoints) && Objects.equals(maxAvailablePoints, module.maxAvailablePoints);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, subjectInfo, moduleNumber, minPoints, maxPoints);
+        return Objects.hash(id, subjectInfo, moduleNumber, minPoints, maxAvailablePoints);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class Module {
                 ", subjectInfo=" + subjectInfo +
                 ", moduleNumber=" + moduleNumber +
                 ", minPoints=" + minPoints +
-                ", maxPoints=" + maxPoints +
+                ", maxPoints=" + maxAvailablePoints +
                 '}';
     }
 }

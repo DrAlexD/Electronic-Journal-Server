@@ -14,4 +14,8 @@ public interface StudentPerformanceInSubjectRepository extends JpaRepository<Stu
 
     @Query("select s from StudentPerformanceInSubject s where s.subjectInfo.id = ?1")
     List<StudentPerformanceInSubject> findBySubjectInfoId(Long subjectInfoId);
+
+    @Query("select s from StudentPerformanceInSubject s where s.subjectInfo.lecturerId= ?1 and s.subjectInfo.semester.id = ?2 or " +
+            "s.subjectInfo.seminarsProfessor.id= ?1 and s.subjectInfo.semester.id = ?2")
+    List<StudentPerformanceInSubject> findByProfessorIdAndSemesterId(Long professorId, Long semesterId);
 }

@@ -14,4 +14,7 @@ public interface StudentLessonRepository extends JpaRepository<StudentLesson, Lo
 
     @Query("select s from StudentLesson s where s.studentPerformanceInModule.studentPerformanceInSubject.id = ?1")
     List<StudentLesson> findByStudentPerformanceInSubjectId(Long studentPerformanceInSubjectId);
+
+    @Query("select s from StudentLesson s where s.lesson.id = ?1")
+    List<StudentLesson> findByLessonId(Long lessonId);
 }

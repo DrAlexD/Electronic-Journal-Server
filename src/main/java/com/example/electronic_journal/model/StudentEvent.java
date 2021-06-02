@@ -28,11 +28,11 @@ public class StudentEvent {
     private Integer variantNumber;
 
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US", timezone = "GMT+03:00")
     private Date finishDate;
     private Integer earnedPoints;
     private Integer bonusPoints;
-    private Boolean isHaveCredit;
+    private Boolean isHasCredit;
 
     public StudentEvent() {
     }
@@ -45,7 +45,7 @@ public class StudentEvent {
         this.variantNumber = variantNumber;
     }
 
-    public StudentEvent(Integer attemptNumber, StudentPerformanceInModule studentPerformanceInModule, Event event, Boolean isAttended, Integer variantNumber, Date finishDate, Integer earnedPoints, Integer bonusPoints, Boolean isHaveCredit) {
+    public StudentEvent(Integer attemptNumber, StudentPerformanceInModule studentPerformanceInModule, Event event, Boolean isAttended, Integer variantNumber, Date finishDate, Integer earnedPoints, Integer bonusPoints, Boolean isHasCredit) {
         this.studentPerformanceInModule = studentPerformanceInModule;
         this.event = event;
         this.attemptNumber = attemptNumber;
@@ -54,8 +54,7 @@ public class StudentEvent {
         this.finishDate = finishDate;
         this.earnedPoints = earnedPoints;
         this.bonusPoints = bonusPoints;
-        this.isHaveCredit = isHaveCredit;
-        /*this.isHaveCredit = earnedPoints + bonusPoints > event.getMinPoints();*/
+        this.isHasCredit = isHasCredit;
     }
 
     public Long getId() {
@@ -130,12 +129,12 @@ public class StudentEvent {
         this.bonusPoints = bonusPoints;
     }
 
-    public Boolean getIsHaveCredit() {
-        return isHaveCredit;
+    public Boolean getIsHasCredit() {
+        return isHasCredit;
     }
 
-    public void setIsHaveCredit(Boolean haveCredit) {
-        isHaveCredit = haveCredit;
+    public void setIsHasCredit(Boolean haveCredit) {
+        isHasCredit = haveCredit;
     }
 
     @Override
@@ -163,7 +162,7 @@ public class StudentEvent {
                 ", finishDate=" + finishDate +
                 ", earnedPoints=" + earnedPoints +
                 ", bonusPoints=" + bonusPoints +
-                ", isHaveCredit=" + isHaveCredit +
+                ", isHaveCredit=" + isHasCredit +
                 '}';
     }
 }

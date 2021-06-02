@@ -1,6 +1,12 @@
+/*
+
 package com.example.electronic_journal;
 
-/*import com.example.electronic_journal.model.*;*/
+
+*/
+/*import com.example.electronic_journal.model.*;*//*
+
+
 
 import com.example.electronic_journal.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +14,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-/*import java.util.Calendar;
-import java.util.Date;*/
+*/
+/*
+import java.util.Calendar;
+import java.util.Date;
+*//*
+
+
 
 
 @Component
@@ -56,10 +67,18 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        /*
-        Professor professor1 = new Professor("Игорь", "Вишняков", "qwerty", encoder.encode("123456"));
+
+   */
+/*     Professor professor1 = new Professor("Игорь", "Вишняков", "qwerty", encoder.encode("123456"));
         professor1.setRole(ERole.ROLE_ADMIN);
-        Professor professor2 = new Professor("Сергей", "Скоробогатов", "СергейСкоробогатов", encoder.encode("1234567"));
+        professorRepository.save(professor1);
+
+        Semester semester3 = new Semester(2021, true);
+        semesterRepository.save(semester3);*//*
+
+
+ */
+/*Professor professor2 = new Professor("Сергей", "Скоробогатов", "СергейСкоробогатов", encoder.encode("1234567"));
         Professor professor3 = new Professor("Анна", "Домрачева", "АннаДомрачева", encoder.encode("1234568"));
 
         professorRepository.save(professor1);
@@ -67,13 +86,13 @@ public class DatabaseLoader implements CommandLineRunner {
         professorRepository.save(professor3);
 
 
-        Semester semester1 = new Semester(2018, true);
-        Semester semester2 = new Semester(2018, false);
-        Semester semester3 = new Semester(2019, true);
+        Semester semester1 = new Semester(2020, true);
+        Semester semester2 = new Semester(2020, false);
+        Semester semester3 = new Semester(2021, true);
 
         semesterRepository.save(semester1);
         semesterRepository.save(semester2);
-        semesterRepository.save(semester3);
+
 
         Subject subject1 = new Subject("Математический анализ");
         Subject subject2 = new Subject("Моделирование");
@@ -114,6 +133,7 @@ public class DatabaseLoader implements CommandLineRunner {
         studentRepository.save(student31);
         studentRepository.save(student32);
         studentRepository.save(student33);
+
 
         SubjectInfo subjectInfo1 = new SubjectInfo(group3, subject1, professor2.getId(), professor1, semester3,
                 true, false);
@@ -274,6 +294,8 @@ public class DatabaseLoader implements CommandLineRunner {
         studentEventRepository.save(studentEvent4);
         studentEventRepository.save(studentEvent5);
         studentEventRepository.save(studentEvent6);
-        */
+*//*
+
     }
 }
+*/

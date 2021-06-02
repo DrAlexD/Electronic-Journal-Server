@@ -20,7 +20,7 @@ public class Lesson {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US")
+    @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US", timezone = "GMT+03:00")
     private Date dateAndTime;
     @Column(nullable = false)
     private Boolean isLecture;

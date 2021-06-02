@@ -1,5 +1,6 @@
 package com.example.electronic_journal.controller;
 
+import com.example.electronic_journal.model.Professor;
 import com.example.electronic_journal.repository.ProfessorRepository;
 import com.example.electronic_journal.repository.StudentRepository;
 import com.example.electronic_journal.security.jwt.JwtUtils;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -39,6 +41,17 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        if (loginRequest.getUsername().equals("admin")) {
+            Optional<Professor> professor = professorRepository.findByUsername(loginRequest.getUsername());
+            if (professor.isPresent()) {
+                if (professor.get().getPassword().equals("123456")) {
+                    Professor changedPasswordProfessor = professor.get();
+                    changedPasswordProfessor.setPassword(encoder.encode("123456"));
+                    professorRepository.save(changedPasswordProfessor);
+                }
+            }
+        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -50,8 +63,6 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()).get(0);
 
-        boolean isProfessor = !role.equals("ROLE_STUDENT");
-
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), isProfessor));
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), role));
     }
 }

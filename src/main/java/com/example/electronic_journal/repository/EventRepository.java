@@ -12,6 +12,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select s from Event s where s.module.subjectInfo.id = ?1")
     List<Event> findBySubjectInfoId(Long subjectInfoId);
 
+    @Query("select s from Event s where s.module.id = ?1")
+    List<Event> findByModuleId(Long moduleId);
+
     @Query("select s from Event s where s.module.subjectInfo.id = ?1 and  s.type = ?2")
     List<Event> findBySubjectInfoIdAndType(Long subjectInfoId, Integer type);
 }

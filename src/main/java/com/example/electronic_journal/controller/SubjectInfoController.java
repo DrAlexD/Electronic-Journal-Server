@@ -16,16 +16,18 @@ import java.util.stream.Collectors;
 public class SubjectInfoController {
 
     private final SubjectInfoRepository subjectInfoRepository;
+    private final GroupRepository groupRepository;
     private final StudentRepository studentRepository;
     private final ModuleRepository moduleRepository;
     private final StudentPerformanceInSubjectRepository studentPerformanceInSubjectRepository;
     private final StudentPerformanceInModuleRepository studentPerformanceInModuleRepository;
 
-    public SubjectInfoController(SubjectInfoRepository subjectInfoRepository, ModuleRepository moduleRepository,
+    public SubjectInfoController(SubjectInfoRepository subjectInfoRepository, GroupRepository groupRepository, ModuleRepository moduleRepository,
                                  StudentPerformanceInSubjectRepository studentPerformanceInSubjectRepository,
                                  StudentPerformanceInModuleRepository studentPerformanceInModuleRepository,
                                  StudentRepository studentRepository) {
         this.subjectInfoRepository = subjectInfoRepository;
+        this.groupRepository = groupRepository;
         this.moduleRepository = moduleRepository;
         this.studentPerformanceInSubjectRepository = studentPerformanceInSubjectRepository;
         this.studentPerformanceInModuleRepository = studentPerformanceInModuleRepository;
@@ -35,13 +37,18 @@ public class SubjectInfoController {
     @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
     @GetMapping("/available-students")
     public ResponseEntity<List<Student>> getAvailableStudents(@RequestParam Long professorId, @RequestParam Long semesterId) {
-        List<SubjectInfo> subjectInfos = new ArrayList<>(subjectInfoRepository
+        List<StudentPerformanceInSubject> studentPerformanceInSubjects = new ArrayList<>(studentPerformanceInSubjectRepository
                 .findByProfessorIdAndSemesterId(professorId, semesterId));
 
-        List<Student> students = subjectInfos.stream()
-                .map(SubjectInfo::getGroup).distinct()
-                .flatMap(group -> group.getStudents().stream())
-                .sorted(Comparator.comparing(Student::getId))
+        List<Student> students = studentPerformanceInSubjects.stream()
+                .map(StudentPerformanceInSubject::getStudent).distinct()
+                .sorted((o1, o2) -> {
+                    if (o1.getGroup().getId().equals(o2.getGroup().getId())) {
+                        return o1.getSecondName().compareTo(o2.getSecondName());
+                    } else {
+                        return o1.getGroup().getTitle().compareTo(o2.getGroup().getTitle());
+                    }
+                })
                 .collect(Collectors.toList());
 
         if (students.isEmpty()) {
@@ -59,6 +66,7 @@ public class SubjectInfoController {
 
         List<Subject> subjects = subjectInfos.stream()
                 .map(SubjectInfo::getSubject).distinct()
+                .sorted(Comparator.comparing(Subject::getTitle))
                 .collect(Collectors.toList());
 
         if (subjects.isEmpty()) {
@@ -75,10 +83,14 @@ public class SubjectInfoController {
         List<SubjectInfo> subjectInfos = new ArrayList<>();
         if (subjectId == null) {
             subjectInfos.addAll(subjectInfoRepository
-                    .findByProfessorIdAndSemesterId(professorId, semesterId));
+                    .findByProfessorIdAndSemesterId(professorId, semesterId).stream()
+                    .sorted(Comparator.comparing(s -> s.getGroup().getTitle()))
+                    .collect(Collectors.toList()));
         } else {
             subjectInfos.addAll(subjectInfoRepository
-                    .findByProfessorIdAndSemesterIdAndSubjectId(professorId, semesterId, subjectId));
+                    .findByProfessorIdAndSemesterIdAndSubjectId(professorId, semesterId, subjectId).stream()
+                    .sorted(Comparator.comparing(s -> s.getGroup().getTitle()))
+                    .collect(Collectors.toList()));
         }
 
 /*        List<SubjectInfo> subjectInfosDistinct = new ArrayList<>();
@@ -110,13 +122,16 @@ public class SubjectInfoController {
 
         List<Subject> subjects = subjectInfos.stream()
                 .map(SubjectInfo::getSubject).distinct()
+                .sorted(Comparator.comparing(Subject::getTitle))
                 .collect(Collectors.toList());
 
         Map<String, List<SubjectInfo>> subjectsWithGroups = subjects.stream()
                 .map(subject -> subject.getId())
                 .collect(Collectors.toMap(String::valueOf,
                         s -> subjectInfoRepository
-                                .findByProfessorIdAndSemesterIdAndSubjectId(professorId, semesterId, s)));
+                                .findByProfessorIdAndSemesterIdAndSubjectId(professorId, semesterId, s).stream()
+                                .sorted(Comparator.comparing(e -> e.getGroup().getTitle()))
+                                .collect(Collectors.toList())));
 
         if (subjectsWithGroups.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -146,14 +161,14 @@ public class SubjectInfoController {
             tempSubjectInfo = _subjectInfo.get();
             if (subjectInfo.getLecturerId() != null)
                 tempSubjectInfo.setLecturerId(subjectInfo.getLecturerId());
-            if (subjectInfo.getSeminarian() != null)
-                tempSubjectInfo.setSeminarian(subjectInfo.getSeminarian());
+            if (subjectInfo.getSeminarsProfessor() != null)
+                tempSubjectInfo.setSeminarsProfessor(subjectInfo.getSeminarsProfessor());
             tempSubjectInfo.setIsExam(subjectInfo.getIsExam());
             tempSubjectInfo.setIsDifferentiatedCredit(subjectInfo.getIsDifferentiatedCredit());
             subjectInfoRepository.save(tempSubjectInfo);
         } else {
             tempSubjectInfo = new SubjectInfo(subjectInfo.getGroup(), subjectInfo.getSubject(),
-                    subjectInfo.getLecturerId(), subjectInfo.getSeminarian(), subjectInfo.getSemester(),
+                    subjectInfo.getLecturerId(), subjectInfo.getSeminarsProfessor(), subjectInfo.getSemester(),
                     subjectInfo.getIsExam(), subjectInfo.getIsDifferentiatedCredit());
             SubjectInfo returnedSubjectInfo = subjectInfoRepository.save(tempSubjectInfo);
 
@@ -161,13 +176,13 @@ public class SubjectInfoController {
             Module module2;
             Module module3;
             if (subjectInfo.getIsExam()) {
-                module1 = moduleRepository.save(new Module(1, returnedSubjectInfo, 10, 20));
-                module2 = moduleRepository.save(new Module(2, returnedSubjectInfo, 10, 20));
-                module3 = moduleRepository.save(new Module(3, returnedSubjectInfo, 10, 20));
+                module1 = moduleRepository.save(new Module(1, returnedSubjectInfo, 10, 0));
+                module2 = moduleRepository.save(new Module(2, returnedSubjectInfo, 10, 0));
+                module3 = moduleRepository.save(new Module(3, returnedSubjectInfo, 10, 0));
             } else {
-                module1 = moduleRepository.save(new Module(1, returnedSubjectInfo, 20, 30));
-                module2 = moduleRepository.save(new Module(2, returnedSubjectInfo, 20, 30));
-                module3 = moduleRepository.save(new Module(3, returnedSubjectInfo, 20, 35));
+                module1 = moduleRepository.save(new Module(1, returnedSubjectInfo, 20, 0));
+                module2 = moduleRepository.save(new Module(2, returnedSubjectInfo, 20, 0));
+                module3 = moduleRepository.save(new Module(3, returnedSubjectInfo, 20, 0));
             }
 
             List<StudentPerformanceInSubject> studentPerformanceInSubjects = studentRepository.findByGroupId(returnedSubjectInfo.getGroup().getId()).stream()
@@ -193,11 +208,26 @@ public class SubjectInfoController {
         _subjectInfo.setGroup(subjectInfo.getGroup());
         _subjectInfo.setSubject(subjectInfo.getSubject());
         _subjectInfo.setLecturerId(subjectInfo.getLecturerId());
-        _subjectInfo.setSeminarian(subjectInfo.getSeminarian());
+        _subjectInfo.setSeminarsProfessor(subjectInfo.getSeminarsProfessor());
         _subjectInfo.setSemester(subjectInfo.getSemester());
         _subjectInfo.setIsExam(subjectInfo.getIsExam());
         _subjectInfo.setIsDifferentiatedCredit(subjectInfo.getIsDifferentiatedCredit());
         subjectInfoRepository.save(_subjectInfo);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/change-group-in-subjects-info/{fromGroupId}/{toGroupId}")
+    public ResponseEntity<HttpStatus> changeGroupInSubjectsInfo(@PathVariable("fromGroupId") long fromGroupId, @PathVariable("toGroupId") long toGroupId) {
+        List<SubjectInfo> subjectInfos = subjectInfoRepository.findByGroupId(fromGroupId);
+        Group group = groupRepository.findById(toGroupId).orElseThrow(() ->
+                new ResourceNotFoundException("Not found Group with id = " + toGroupId));
+
+        for (SubjectInfo subjectInfo : subjectInfos) {
+            subjectInfo.setGroup(group);
+            subjectInfoRepository.save(subjectInfo);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -209,15 +239,15 @@ public class SubjectInfoController {
                 .orElseThrow(() -> new ResourceNotFoundException("Not found SubjectInfo with id = " + id));
 
         if (_subjectInfo.getLecturerId() != null) {
-            if (_subjectInfo.getSeminarian() != null) {
-                if (_subjectInfo.getLecturerId().equals(professorId) && _subjectInfo.getSeminarian().getId().equals(professorId)) {
+            if (_subjectInfo.getSeminarsProfessor() != null) {
+                if (_subjectInfo.getLecturerId().equals(professorId) && _subjectInfo.getSeminarsProfessor().getId().equals(professorId)) {
                     subjectInfoRepository.deleteById(id);
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 } else if (_subjectInfo.getLecturerId().equals(professorId)) {
                     _subjectInfo.setLecturerId(null);
                     subjectInfoRepository.save(_subjectInfo);
-                } else if (_subjectInfo.getSeminarian().getId().equals(professorId)) {
-                    _subjectInfo.setSeminarian(null);
+                } else if (_subjectInfo.getSeminarsProfessor().getId().equals(professorId)) {
+                    _subjectInfo.setSeminarsProfessor(null);
                     subjectInfoRepository.save(_subjectInfo);
                 }
             } else {
@@ -227,8 +257,8 @@ public class SubjectInfoController {
                 }
             }
         } else {
-            if (_subjectInfo.getSeminarian() != null) {
-                if (_subjectInfo.getSeminarian().getId().equals(professorId)) {
+            if (_subjectInfo.getSeminarsProfessor() != null) {
+                if (_subjectInfo.getSeminarsProfessor().getId().equals(professorId)) {
                     subjectInfoRepository.deleteById(id);
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
