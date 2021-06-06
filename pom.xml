@@ -11,7 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>electronic_journal</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>electronic_journal</name>
+    <name>electronic_journal_server</name>
     <description>Electronic Journal Server</description>
     <properties>
         <java.version>1.8</java.version>

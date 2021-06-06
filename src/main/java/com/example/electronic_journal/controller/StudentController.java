@@ -39,7 +39,7 @@ public class StudentController {
         this.encoder = encoder;
     }
 
-    @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PROFESSOR') or hasRole('ADMIN') or hasRole('STUDENT')")
     @GetMapping("/students")
     public ResponseEntity<List<Student>> getAllStudents(@RequestParam(required = false) Long groupId) {
         List<Student> students = new ArrayList<>();
