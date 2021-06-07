@@ -130,25 +130,27 @@ public class StudentLessonController {
         StudentLesson studentLessonReturned = studentLessonRepository.save(new StudentLesson(studentLesson.getStudentPerformanceInModule(),
                 studentLesson.getLesson(), studentLesson.getIsAttended()));
 
-        StudentPerformanceInModule studentPerformanceInModule = studentLessonReturned.getStudentPerformanceInModule();
-        StudentPerformanceInSubject studentPerformanceInSubject = studentLessonReturned.getStudentPerformanceInModule().getStudentPerformanceInSubject();
+        if (studentLessonReturned.getIsAttended() != null && studentLessonReturned.getIsAttended()) {
+            StudentPerformanceInModule studentPerformanceInModule = studentLessonReturned.getStudentPerformanceInModule();
+            StudentPerformanceInSubject studentPerformanceInSubject = studentLessonReturned.getStudentPerformanceInModule().getStudentPerformanceInSubject();
 
-        if (studentLessonReturned.getLesson().getPointsPerVisit() != null && studentLessonReturned.getLesson().getPointsPerVisit() != 0) {
-            if (studentPerformanceInModule.getEarnedPoints() != null && studentPerformanceInModule.getEarnedPoints() != 0)
-                studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() + studentLessonReturned.getLesson().getPointsPerVisit());
-            else
-                studentPerformanceInModule.setEarnedPoints(studentLessonReturned.getLesson().getPointsPerVisit());
+            if (studentLessonReturned.getLesson().getPointsPerVisit() != null && studentLessonReturned.getLesson().getPointsPerVisit() != 0) {
+                if (studentPerformanceInModule.getEarnedPoints() != null && studentPerformanceInModule.getEarnedPoints() != 0)
+                    studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() + studentLessonReturned.getLesson().getPointsPerVisit());
+                else
+                    studentPerformanceInModule.setEarnedPoints(studentLessonReturned.getLesson().getPointsPerVisit());
 
-            defineIsHasModuleCredit(studentPerformanceInModule);
+                defineIsHasModuleCredit(studentPerformanceInModule);
 
-            if (studentPerformanceInSubject.getEarnedPoints() != null && studentPerformanceInSubject.getEarnedPoints() != 0)
-                studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() + studentLessonReturned.getLesson().getPointsPerVisit());
-            else
-                studentPerformanceInSubject.setEarnedPoints(studentLessonReturned.getLesson().getPointsPerVisit());
+                if (studentPerformanceInSubject.getEarnedPoints() != null && studentPerformanceInSubject.getEarnedPoints() != 0)
+                    studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() + studentLessonReturned.getLesson().getPointsPerVisit());
+                else
+                    studentPerformanceInSubject.setEarnedPoints(studentLessonReturned.getLesson().getPointsPerVisit());
+            }
+
+            studentPerformanceInModuleRepository.save(studentPerformanceInModule);
+            studentPerformanceInSubjectRepository.save(studentPerformanceInSubject);
         }
-
-        studentPerformanceInModuleRepository.save(studentPerformanceInModule);
-        studentPerformanceInSubjectRepository.save(studentPerformanceInSubject);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -160,6 +162,7 @@ public class StudentLessonController {
                 .orElseThrow(() -> new ResourceNotFoundException("Not found StudentLesson with id = " + id));
 
         Integer beforeBonusPoints = _studentLesson.getBonusPoints();
+        Boolean beforeIsAttended = _studentLesson.getIsAttended();
 
         _studentLesson.setStudentPerformanceInModule(studentLesson.getStudentPerformanceInModule());
         _studentLesson.setLesson(studentLesson.getLesson());
@@ -171,6 +174,25 @@ public class StudentLessonController {
         StudentPerformanceInSubject studentPerformanceInSubject = studentLessonReturned.getStudentPerformanceInModule().getStudentPerformanceInSubject();
 
         boolean isChanged = false;
+
+        if (!beforeIsAttended && studentLessonReturned.getIsAttended()) {
+            if (studentPerformanceInModule.getEarnedPoints() != null && studentPerformanceInModule.getEarnedPoints() != 0)
+                studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() + studentLessonReturned.getLesson().getPointsPerVisit());
+            else
+                studentPerformanceInModule.setEarnedPoints(studentLessonReturned.getLesson().getPointsPerVisit());
+
+            if (studentPerformanceInSubject.getEarnedPoints() != null && studentPerformanceInSubject.getEarnedPoints() != 0)
+                studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() + studentLessonReturned.getLesson().getPointsPerVisit());
+            else
+                studentPerformanceInSubject.setEarnedPoints(studentLessonReturned.getLesson().getPointsPerVisit());
+
+            isChanged = true;
+        } else if (beforeIsAttended && !studentLessonReturned.getIsAttended()) {
+            studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() - studentLessonReturned.getLesson().getPointsPerVisit());
+            studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() - studentLessonReturned.getLesson().getPointsPerVisit());
+
+            isChanged = true;
+        }
 
         if (beforeBonusPoints != null && beforeBonusPoints != 0) {
             if (studentLessonReturned.getBonusPoints() != null && studentLessonReturned.getBonusPoints() != 0) {
@@ -213,31 +235,33 @@ public class StudentLessonController {
         StudentLesson studentLesson = studentLessonRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found StudentLesson with id = " + id));
 
-        StudentPerformanceInModule studentPerformanceInModule = studentLesson.getStudentPerformanceInModule();
-        StudentPerformanceInSubject studentPerformanceInSubject = studentLesson.getStudentPerformanceInModule().getStudentPerformanceInSubject();
+        if (studentLesson.getIsAttended() != null && studentLesson.getIsAttended()) {
+            StudentPerformanceInModule studentPerformanceInModule = studentLesson.getStudentPerformanceInModule();
+            StudentPerformanceInSubject studentPerformanceInSubject = studentLesson.getStudentPerformanceInModule().getStudentPerformanceInSubject();
 
-        boolean isChanged = false;
-        if (studentLesson.getLesson().getPointsPerVisit() != null && studentLesson.getLesson().getPointsPerVisit() != 0) {
-            studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() - studentLesson.getLesson().getPointsPerVisit());
+            boolean isChanged = false;
+            if (studentLesson.getLesson().getPointsPerVisit() != null && studentLesson.getLesson().getPointsPerVisit() != 0) {
+                studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() - studentLesson.getLesson().getPointsPerVisit());
 
-            isChanged = true;
+                isChanged = true;
 
-            studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() - studentLesson.getLesson().getPointsPerVisit());
+                studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() - studentLesson.getLesson().getPointsPerVisit());
+            }
+
+            if (studentLesson.getBonusPoints() != null && studentLesson.getBonusPoints() != 0) {
+                studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() - studentLesson.getBonusPoints());
+
+                isChanged = true;
+
+                studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() - studentLesson.getBonusPoints());
+            }
+
+            if (isChanged)
+                defineIsHasModuleCredit(studentPerformanceInModule);
+
+            studentPerformanceInModuleRepository.save(studentPerformanceInModule);
+            studentPerformanceInSubjectRepository.save(studentPerformanceInSubject);
         }
-
-        if (studentLesson.getBonusPoints() != null && studentLesson.getBonusPoints() != 0) {
-            studentPerformanceInModule.setEarnedPoints(studentPerformanceInModule.getEarnedPoints() - studentLesson.getBonusPoints());
-
-            isChanged = true;
-
-            studentPerformanceInSubject.setEarnedPoints(studentPerformanceInSubject.getEarnedPoints() - studentLesson.getBonusPoints());
-        }
-
-        if (isChanged)
-            defineIsHasModuleCredit(studentPerformanceInModule);
-
-        studentPerformanceInModuleRepository.save(studentPerformanceInModule);
-        studentPerformanceInSubjectRepository.save(studentPerformanceInSubject);
 
         studentLessonRepository.deleteById(id);
 

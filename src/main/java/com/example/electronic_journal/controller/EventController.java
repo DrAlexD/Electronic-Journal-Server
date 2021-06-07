@@ -73,7 +73,7 @@ public class EventController {
             return new ResponseEntity<>(sum2, HttpStatus.NOT_ACCEPTABLE);
         } else {
             Event returnedEvent = eventRepository.save(new Event(event.getModule(), event.getType(), event.getNumber(), event.getStartDate(),
-                    event.getDeadlineDate(), event.getMinPoints(), event.getMaxPoints(), event.getNumberOfVariants()));
+                    event.getDeadlineDate(), event.getMinPoints(), event.getMaxPoints()));
 
             Module module = returnedEvent.getModule();
             if (module.getMaxAvailablePoints() != null)

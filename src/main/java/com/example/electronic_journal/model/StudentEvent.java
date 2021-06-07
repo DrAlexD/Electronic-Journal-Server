@@ -24,9 +24,8 @@ public class StudentEvent {
     private Integer attemptNumber;
     @Column(nullable = false)
     private Boolean isAttended;
-    @Column(nullable = false)
-    private Integer variantNumber;
 
+    private Integer variantNumber;
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "MMM dd, yyyy HH:mm:ss", locale = "en_US", timezone = "GMT+03:00")
     private Date finishDate;
@@ -37,12 +36,11 @@ public class StudentEvent {
     public StudentEvent() {
     }
 
-    public StudentEvent(Integer attemptNumber, StudentPerformanceInModule studentPerformanceInModule, Event event, Boolean isAttended, Integer variantNumber) {
+    public StudentEvent(Integer attemptNumber, StudentPerformanceInModule studentPerformanceInModule, Event event, Boolean isAttended) {
         this.studentPerformanceInModule = studentPerformanceInModule;
         this.event = event;
         this.attemptNumber = attemptNumber;
         this.isAttended = isAttended;
-        this.variantNumber = variantNumber;
     }
 
     public StudentEvent(Integer attemptNumber, StudentPerformanceInModule studentPerformanceInModule, Event event, Boolean isAttended, Integer variantNumber, Date finishDate, Integer earnedPoints, Integer bonusPoints, Boolean isHasCredit) {

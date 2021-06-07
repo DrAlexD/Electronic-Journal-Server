@@ -154,7 +154,7 @@ public class StudentEventController {
         }
 
         StudentEvent studentEventReturned = studentEventRepository.save(new StudentEvent(studentEvent.getAttemptNumber(), studentEvent.getStudentPerformanceInModule(),
-                studentEvent.getEvent(), studentEvent.getIsAttended(), studentEvent.getVariantNumber()));
+                studentEvent.getEvent(), studentEvent.getIsAttended()));
 
         StudentPerformanceInModule studentPerformanceInModule = studentEventReturned.getStudentPerformanceInModule();
         StudentPerformanceInSubject studentPerformanceInSubject = studentEventReturned.getStudentPerformanceInModule().getStudentPerformanceInSubject();

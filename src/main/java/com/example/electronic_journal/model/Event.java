@@ -38,10 +38,19 @@ public class Event {
     private Integer minPoints;
     @Column(nullable = false)
     private Integer maxPoints;
-    @Column(nullable = false)
     private Integer numberOfVariants;
 
     public Event() {
+    }
+
+    public Event(Module module, Integer type, Integer number, Date startDate, Date deadlineDate, Integer minPoints, Integer maxPoints) {
+        this.module = module;
+        this.type = type;
+        this.number = number;
+        this.startDate = startDate;
+        this.deadlineDate = deadlineDate;
+        this.minPoints = minPoints;
+        this.maxPoints = maxPoints;
     }
 
     public Event(Module module, Integer type, Integer number, Date startDate, Date deadlineDate, Integer minPoints, Integer maxPoints, Integer numberOfVariants) {

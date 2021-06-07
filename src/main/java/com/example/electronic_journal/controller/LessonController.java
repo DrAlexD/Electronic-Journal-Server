@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -111,43 +110,52 @@ public class LessonController {
             moduleRepository.save(module);
 
             List<StudentLesson> studentLessons = studentLessonRepository.findByLessonId(id);
-            List<StudentPerformanceInModule> studentPerformancesInModule = studentLessons.stream().map(StudentLesson::getStudentPerformanceInModule).collect(Collectors.toList());
-
+            /*       List<StudentPerformanceInModule> studentPerformancesInModule = studentLessons.stream().map(StudentLesson::getStudentPerformanceInModule).collect(Collectors.toList());
+             */
             if (beforePointsPerVisit != 0) {
                 if (lessonReturned.getPointsPerVisit() != 0) {
-                    for (StudentPerformanceInModule s : studentPerformancesInModule) {
-                        StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
-                        s.setEarnedPoints(s.getEarnedPoints() + lessonReturned.getPointsPerVisit() - beforePointsPerVisit);
+                    for (StudentLesson studentLesson : studentLessons) {
+                        if (studentLesson.getIsAttended() != null && studentLesson.getIsAttended()) {
+                            StudentPerformanceInModule s = studentLesson.getStudentPerformanceInModule();
+                            StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
+                            s.setEarnedPoints(s.getEarnedPoints() + lessonReturned.getPointsPerVisit() - beforePointsPerVisit);
 
-                        defineIsHasModuleCredit(s);
+                            defineIsHasModuleCredit(s);
 
-                        ss.setEarnedPoints(ss.getEarnedPoints() + lessonReturned.getPointsPerVisit() - beforePointsPerVisit);
-                        studentPerformanceInModuleRepository.save(s);
-                        studentPerformanceInSubjectRepository.save(ss);
+                            ss.setEarnedPoints(ss.getEarnedPoints() + lessonReturned.getPointsPerVisit() - beforePointsPerVisit);
+                            studentPerformanceInModuleRepository.save(s);
+                            studentPerformanceInSubjectRepository.save(ss);
+                        }
                     }
                 } else {
-                    for (StudentPerformanceInModule s : studentPerformancesInModule) {
-                        StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
-                        s.setEarnedPoints(s.getEarnedPoints() - beforePointsPerVisit);
+                    for (StudentLesson studentLesson : studentLessons) {
+                        if (studentLesson.getIsAttended() != null && studentLesson.getIsAttended()) {
+                            StudentPerformanceInModule s = studentLesson.getStudentPerformanceInModule();
+                            StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
+                            s.setEarnedPoints(s.getEarnedPoints() - beforePointsPerVisit);
 
-                        defineIsHasModuleCredit(s);
+                            defineIsHasModuleCredit(s);
 
-                        ss.setEarnedPoints(ss.getEarnedPoints() - beforePointsPerVisit);
-                        studentPerformanceInModuleRepository.save(s);
-                        studentPerformanceInSubjectRepository.save(ss);
+                            ss.setEarnedPoints(ss.getEarnedPoints() - beforePointsPerVisit);
+                            studentPerformanceInModuleRepository.save(s);
+                            studentPerformanceInSubjectRepository.save(ss);
+                        }
                     }
                 }
             } else {
                 if (lessonReturned.getPointsPerVisit() != 0) {
-                    for (StudentPerformanceInModule s : studentPerformancesInModule) {
-                        StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
-                        s.setEarnedPoints(s.getEarnedPoints() + lessonReturned.getPointsPerVisit());
+                    for (StudentLesson studentLesson : studentLessons) {
+                        if (studentLesson.getIsAttended() != null && studentLesson.getIsAttended()) {
+                            StudentPerformanceInModule s = studentLesson.getStudentPerformanceInModule();
+                            StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
+                            s.setEarnedPoints(s.getEarnedPoints() + lessonReturned.getPointsPerVisit());
 
-                        defineIsHasModuleCredit(s);
+                            defineIsHasModuleCredit(s);
 
-                        ss.setEarnedPoints(ss.getEarnedPoints() + lessonReturned.getPointsPerVisit());
-                        studentPerformanceInModuleRepository.save(s);
-                        studentPerformanceInSubjectRepository.save(ss);
+                            ss.setEarnedPoints(ss.getEarnedPoints() + lessonReturned.getPointsPerVisit());
+                            studentPerformanceInModuleRepository.save(s);
+                            studentPerformanceInSubjectRepository.save(ss);
+                        }
                     }
                 }
             }
@@ -204,35 +212,37 @@ public class LessonController {
         List<StudentLesson> studentLessons = studentLessonRepository.findByLessonId(id);
 
         for (StudentLesson studentLesson : studentLessons) {
-            StudentPerformanceInModule s = studentLesson.getStudentPerformanceInModule();
+            if (studentLesson.getIsAttended() != null && studentLesson.getIsAttended()) {
+                StudentPerformanceInModule s = studentLesson.getStudentPerformanceInModule();
 
-            if (_lesson.getPointsPerVisit() != 0) {
-                StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
-                if (studentLesson.getBonusPoints() != null && studentLesson.getBonusPoints() != 0) {
-                    s.setEarnedPoints(s.getEarnedPoints() - _lesson.getPointsPerVisit() - studentLesson.getBonusPoints());
-
-                    defineIsHasModuleCredit(s);
-
-                    ss.setEarnedPoints(ss.getEarnedPoints() - _lesson.getPointsPerVisit() - studentLesson.getBonusPoints());
-                } else {
-                    s.setEarnedPoints(s.getEarnedPoints() - _lesson.getPointsPerVisit());
-
-                    defineIsHasModuleCredit(s);
-
-                    ss.setEarnedPoints(ss.getEarnedPoints() - _lesson.getPointsPerVisit());
-                }
-                studentPerformanceInModuleRepository.save(s);
-                studentPerformanceInSubjectRepository.save(ss);
-            } else {
-                if (studentLesson.getBonusPoints() != null && studentLesson.getBonusPoints() != 0) {
+                if (_lesson.getPointsPerVisit() != 0) {
                     StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
-                    s.setEarnedPoints(s.getEarnedPoints() - studentLesson.getBonusPoints());
+                    if (studentLesson.getBonusPoints() != null && studentLesson.getBonusPoints() != 0) {
+                        s.setEarnedPoints(s.getEarnedPoints() - _lesson.getPointsPerVisit() - studentLesson.getBonusPoints());
 
-                    defineIsHasModuleCredit(s);
+                        defineIsHasModuleCredit(s);
 
-                    ss.setEarnedPoints(ss.getEarnedPoints() - studentLesson.getBonusPoints());
+                        ss.setEarnedPoints(ss.getEarnedPoints() - _lesson.getPointsPerVisit() - studentLesson.getBonusPoints());
+                    } else {
+                        s.setEarnedPoints(s.getEarnedPoints() - _lesson.getPointsPerVisit());
+
+                        defineIsHasModuleCredit(s);
+
+                        ss.setEarnedPoints(ss.getEarnedPoints() - _lesson.getPointsPerVisit());
+                    }
                     studentPerformanceInModuleRepository.save(s);
                     studentPerformanceInSubjectRepository.save(ss);
+                } else {
+                    if (studentLesson.getBonusPoints() != null && studentLesson.getBonusPoints() != 0) {
+                        StudentPerformanceInSubject ss = s.getStudentPerformanceInSubject();
+                        s.setEarnedPoints(s.getEarnedPoints() - studentLesson.getBonusPoints());
+
+                        defineIsHasModuleCredit(s);
+
+                        ss.setEarnedPoints(ss.getEarnedPoints() - studentLesson.getBonusPoints());
+                        studentPerformanceInModuleRepository.save(s);
+                        studentPerformanceInSubjectRepository.save(ss);
+                    }
                 }
             }
         }
